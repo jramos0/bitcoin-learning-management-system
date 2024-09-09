@@ -17,6 +17,7 @@ interface BuilderMain {
     twitter?: string;
     github?: string;
     nostr?: string;
+    video?: string;
   };
   address_line_1: string;
   address_line_2: string;
@@ -71,11 +72,11 @@ export const createProcessChangedBuilder = (
             }
 
             const result = await transaction<Builder[]>`
-              INSERT INTO content.builders (resource_id, name, category, languages, website_url, twitter_url, github_url, nostr, address_line_1, address_line_2, address_line_3, original_language)
+              INSERT INTO content.builders (resource_id, name, category, languages, website_url, twitter_url, github_url, nostr, video_url, address_line_1, address_line_2, address_line_3, original_language)
               VALUES (
                 ${id}, ${parsedBuilder.name}, ${parsedBuilder.category.toLowerCase()}, ${parsedBuilder.language}, 
                 ${parsedBuilder.links.website}, ${parsedBuilder.links.twitter},
-                ${parsedBuilder.links.github}, ${parsedBuilder.links.nostr}, ${parsedBuilder.address_line_1}, ${parsedBuilder.address_line_2}, ${parsedBuilder.address_line_3}, ${parsedBuilder.original_language}
+                ${parsedBuilder.links.github}, ${parsedBuilder.links.nostr}, ${parsedBuilder.links.video}, ${parsedBuilder.address_line_1}, ${parsedBuilder.address_line_2}, ${parsedBuilder.address_line_3}, ${parsedBuilder.original_language}
               )
               ON CONFLICT (resource_id) DO UPDATE SET
                 name = EXCLUDED.name,
@@ -85,6 +86,7 @@ export const createProcessChangedBuilder = (
                 twitter_url = EXCLUDED.twitter_url,
                 github_url = EXCLUDED.github_url,
                 nostr = EXCLUDED.nostr,
+                video_url = EXCLUDED.video_url,
                 address_line_1 = EXCLUDED.address_line_1,
                 address_line_2 = EXCLUDED.address_line_2,
                 address_line_3 = EXCLUDED.address_line_3,

@@ -1,0 +1,1 @@
+ALTER TABLE "content"."builders" ADD COLUMN "video_url" text;

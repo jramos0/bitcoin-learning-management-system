@@ -28,6 +28,7 @@ export const joinedBuilderSchema = resourceSchema
       websiteUrl: true,
       twitterUrl: true,
       githubUrl: true,
+      videoUrl: true,
       nostr: true,
       addressLine1: true,
       addressLine2: true,

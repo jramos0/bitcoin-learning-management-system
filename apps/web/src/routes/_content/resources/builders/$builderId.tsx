@@ -159,6 +159,15 @@ function Builder() {
                     <BsGithub size={isScreenMd ? 32 : 16} />
                   </a>
                 )}
+                {builder.videoUrl && (
+                  <iframe
+                    src={builder.videoUrl}
+                    className="w-full h-[250px] md:h-[400px] rounded-lg"
+                    allowFullScreen
+                    title={`Video about ${builder.name}`} // Agrega un título descriptivo
+                  />
+                )}
+
                 {builder.websiteUrl && (
                   <a
                     href={builder.websiteUrl}

@@ -349,6 +349,7 @@ export const contentBuilders = content.table('builders', {
   twitterUrl: text('twitter_url'),
   githubUrl: text('github_url'),
   nostr: text('nostr'),
+  videoUrl: text('video_url'),
 });
 
 export const contentBuildersLocalized = content.table(

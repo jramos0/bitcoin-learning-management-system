@@ -14,6 +14,7 @@ export interface Builder {
   twitterUrl: string | null;
   githubUrl: string | null;
   nostr: string | null;
+  videoUrl: string | null;
 }
 
 export interface BuilderLocalized {
@@ -32,6 +33,7 @@ export interface JoinedBuilder {
   websiteUrl: string | null;
   twitterUrl: string | null;
   githubUrl: string | null;
+  videoUrl: string | null;
   nostr: string | null;
   addressLine1: string | null;
   addressLine2: string | null;
