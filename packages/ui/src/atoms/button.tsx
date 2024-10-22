@@ -21,13 +21,15 @@ const buttonVariants = cva(
           'text-text disabled:!text-newBlack-5 disabled:!border-newBlack-5',
         transparent: 'bg-white/30 text-white shadow-button',
         fakeDisabled: '!bg-darkOrange-1 !text-darkOrange-3',
+        flags: 'bg-[#ffffff4d] text-white !rounded-[16px]',
       },
       size: {
-        xs: 'px-2 py-1.5 text-xs leading-[14px] !font-medium rounded-md',
-        s: 'px-2.5 py-1.5 text-base leading-[19px] !font-medium rounded-md',
+        xs: 'px-2 py-1 text-xs leading-[14px] !font-medium rounded-lg',
+        s: 'px-2.5 py-1.5 text-base leading-[19px] !font-medium rounded-lg',
         m: 'px-3.5 py-3 text-lg leading-[21px] !font-medium rounded-lg',
         l: 'px-[18px] py-[14px] text-xl leading-[24px] !font-medium rounded-2xl',
         xl: 'px-12 py-3 text-xl !font-medium rounded-2xl',
+        flagsMobile: 'px-2.5 py-[14px] font-base font-medium rounded-[8px]',
       },
     },
     defaultVariants: {
@@ -78,7 +80,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           ...classes,
           'flex flex-row items-center justify-center transition-colors duration-150',
           glowing ? 'shadow-md-button' : '',
-          'group',
+          'group/arrow',
         )}
         ref={ref}
         {...props}

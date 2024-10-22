@@ -8,6 +8,12 @@ import {
   unique,
 } from 'drizzle-orm/pg-core';
 
+const blob = customType<{ data: Buffer; notNull: false; default: false }>({
+  dataType() {
+    return 'bytea';
+  },
+});
+
 export const users = pgSchema('users');
 export const content = pgSchema('content');
 
@@ -544,6 +550,8 @@ export const contentCourses = content.table('courses', (t) => ({
   lastUpdated: t.timestamp({ withTimezone: true }).defaultNow().notNull(),
   lastCommit: t.varchar({ length: 40 }).notNull(),
   lastSync: t.timestamp({ withTimezone: true }).defaultNow().notNull(),
+  numberOfRating: t.integer().default(0).notNull(),
+  sumOfAllRating: t.integer().default(0).notNull(),
 }));
 
 export const contentCoursesLocalized = content.table(
@@ -1267,6 +1275,36 @@ export const usersExamAttempts = users.table('exam_attempts', (t) => ({
 
   startedAt: t.timestamp({ withTimezone: true }).notNull(),
   finishedAt: t.timestamp({ withTimezone: true }),
+}));
+
+export const userExamTimestamps = users.table('exam_timestamps', (t) => ({
+  id: t.uuid().defaultRandom().primaryKey().notNull(),
+
+  // Reference to exam attempt
+  examAttemptId: t
+    .uuid()
+    .notNull()
+    .references(() => usersExamAttempts.id, { onDelete: 'cascade' }),
+
+  // Timestamp data
+  txt: t.text().notNull(), // Text to timestamp
+  sig: t.text().notNull(), // Signed message
+  ots: blob('ots').notNull(), // OpenTimestamps proof
+  hash: t.varchar({ length: 64 }).notNull(), // Hash of the signature (ots target)
+
+  // Is the timestamp is confirmed
+  confirmed: t.boolean().default(false).notNull(),
+  blockHash: t.varchar({ length: 64 }),
+  blockHeight: t.integer(),
+  blockTimestamp: t.bigint({ mode: 'bigint' }),
+
+  // If pdf/image has been generated
+  pdfKey: t.varchar({ length: 255 }),
+  imgKey: t.varchar({ length: 255 }),
+
+  createdAt: t.timestamp().defaultNow().notNull(),
+  updatedAt: t.timestamp().defaultNow().notNull(),
+  confirmedAt: t.timestamp(),
 }));
 
 export const usersQuizAttempts = users.table(

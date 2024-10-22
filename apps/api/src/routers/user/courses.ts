@@ -7,14 +7,20 @@ import {
   courseProgressExtendedSchema,
   courseProgressSchema,
   courseReviewSchema,
+  courseSuccededExamSchema,
   courseUserChapterSchema,
   partialExamQuestionSchema,
 } from '@blms/schemas';
-import { createCalculateCourseChapterSeats } from '@blms/service-content';
+import {
+  createCalculateCourseChapterSeats,
+  createRefreshCourseRating,
+} from '@blms/service-content';
 import type { GetPaymentOutput } from '@blms/service-user';
 import {
   createCompleteChapter,
   createCompleteExamAttempt,
+  createGetAllSuccededUserExams,
+  createGetAllUserCourseExamsResults,
   createGetCourseReview,
   createGetLatestExamResults,
   createGetPayment,
@@ -34,6 +40,7 @@ import type {
   CourseProgress,
   CourseProgressExtended,
   CourseReview,
+  CourseSuccededExam,
   CourseUserChapter,
   PartialExamQuestion,
 } from '@blms/types';
@@ -60,18 +67,21 @@ const completeChapterProcedure = studentProcedure
   );
 
 const getProgressProcedure = studentProcedure
-  .input(z.void())
+  .input(z.object({ courseId: z.string() }).optional())
   .output<Parser<CourseProgressExtended[]>>(
     courseProgressExtendedSchema.array(),
   )
-  .query(({ ctx }) =>
-    createGetProgress(ctx.dependencies)({ uid: ctx.user.uid }),
+  .query(({ ctx, input }) =>
+    createGetProgress(ctx.dependencies)({
+      uid: ctx.user.uid,
+      courseId: input?.courseId || '',
+    }),
   );
 
 const startExamAttemptProcedure = studentProcedure
   .input(z.object({ courseId: z.string(), language: z.string() }))
   .output<Parser<PartialExamQuestion[]>>(partialExamQuestionSchema.array())
-  .mutation(async ({ ctx, input }) =>
+  .mutation(({ ctx, input }) =>
     createStartExamAttempt(ctx.dependencies)({
       uid: ctx.user.uid,
       courseId: input.courseId,
@@ -97,6 +107,30 @@ const getLatestExamResultsProcedure = studentProcedure
     createGetLatestExamResults(ctx.dependencies)({
       uid: ctx.user.uid,
       courseId: input.courseId,
+    }),
+  );
+
+const getAllUserCourseExamResultsProcedure = studentProcedure
+  .input(z.object({ courseId: z.string() }))
+  .output<Parser<CourseExamResults[]>>(courseExamResultsSchema.array())
+  .query(({ ctx, input }) =>
+    createGetAllUserCourseExamsResults(ctx.dependencies)({
+      uid: ctx.user.uid,
+      courseId: input.courseId,
+    }),
+  );
+
+const getAllSuccededUserExamsProcedure = studentProcedure
+  .input(
+    z.object({
+      language: z.string(),
+    }),
+  )
+  .output<Parser<CourseSuccededExam[]>>(courseSuccededExamSchema.array())
+  .query(({ ctx, input }) =>
+    createGetAllSuccededUserExams(ctx.dependencies)({
+      uid: ctx.user.uid,
+      language: input.language,
     }),
   );
 
@@ -134,15 +168,17 @@ const saveCourseReviewProcedure = studentProcedure
     }),
   )
   .output<Parser<void>>(z.void())
-  .mutation(({ ctx, input }) =>
-    createSaveCourseReview(ctx.dependencies)({
+  .mutation(async ({ ctx, input }) => {
+    await createSaveCourseReview(ctx.dependencies)({
       newReview: {
         ...input,
         createdAt: new Date(),
         uid: ctx.user.uid,
       },
-    }),
-  );
+    });
+
+    await createRefreshCourseRating(ctx.dependencies)(input.courseId);
+  });
 
 const savePaymentProcedure = studentProcedure
   .input(
@@ -279,6 +315,8 @@ export const userCoursesRouter = createTRPCRouter({
   completeChapter: completeChapterProcedure,
   completeExamAttempt: completeExamAttemptProcedure,
   downloadChapterTicket: downloadChapterTicketProcedure,
+  getAllUserCourseExamResults: getAllUserCourseExamResultsProcedure,
+  getAllSuccededUserExams: getAllSuccededUserExamsProcedure,
   getCourseReview: getCourseReviewProcedure,
   getLatestExamResults: getLatestExamResultsProcedure,
   getProgress: getProgressProcedure,

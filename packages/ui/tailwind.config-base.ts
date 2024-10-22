@@ -188,6 +188,20 @@ const baseConfig: Config = {
       grayblue: {
         300: '#B6BFD3',
       },
+
+      tertiary: {
+        1: '#F1EEEC',
+        2: '#E3DDD9',
+        3: '#D6CCC6',
+        4: '#C8BCB4',
+        5: '#BBABA2',
+        6: '#A18C7F',
+        7: '#876D5D',
+        8: '#695142',
+        9: '#49372C',
+        10: '#2B1F18',
+        11: '#100A07',
+      },
     },
     extend: {
       colors: {
@@ -255,6 +269,10 @@ const baseConfig: Config = {
           'linear-gradient(175deg, #20376C 83%, rgba(255,255,255,1) 85%);',
         'gradient-cards':
           'linear-gradient(180deg, rgba(0, 0, 0, 0.00) 48.98%, rgba(40, 33, 33, 0.90) 80.73%);',
+        'home-gradient':
+          'linear-gradient(180deg, rgba(255, 92, 0, 0.00) 0%, rgba(255, 92, 0, 0.90) 10.5%, rgba(255, 92, 0, 0.00) 50%)',
+        'home-gradient-mobile':
+          'linear-gradient(180deg, rgba(255, 92, 0, 0.00) 0%, rgba(255, 92, 0, 0.90) 6.5%, rgba(255, 92, 0, 0.00) 30%)',
       },
       boxShadow: {
         'md-dark':
@@ -276,6 +294,7 @@ const baseConfig: Config = {
         'search-word-md': '0px 0px 51.676px 8.515px rgba(255,92,0,0.25)',
         'filter-bar': '0px 0px 50px 8px rgba(255,92,0,0.50)',
         'tabs-sm': '0px 2px 2px 0px rgba(0, 0, 0, 0.25);',
+        lg: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);',
       },
       letterSpacing: {
         '015px': '0.15px',
